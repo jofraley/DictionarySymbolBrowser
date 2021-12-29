@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <style type="text/css">
+    html,
+    body,
+    .mymap {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+    }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <!--<script src="../situation.json"></script>-->
+  <script src="../landtracks_geoevent.json"></script>
+</head>
+
+<body>
+  <div id="map" class="mymap"></div>
+
+  <script>
+      var symbolURLprefix = "https://vinnakota1.esri.com/server/rest/services/Utilities/SymbolsUtility/SymbolServer/generateImage?webstyle=4ccb7545bf8e4e8c8c34c05b743e1940&symbolName=&dictionaryFeatures=%7B%22attributes%22%3A%7B%22sidc%22%3A%22";
+      var symbolURLsuffix = "%22%7D%7D&dpi=&size=200%2C200&format=png32&f=image";
+      
+      var osmAttr = '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>';
+      //var OSM = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: osmAttr }),
+      //  latlng = L.latLng(59, 16);
+      var OSM = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18, attribution: osmAttr }),
+        latlng = L.latLng(36.6002, -121.8941);
+      var map = L.map('map', { center: latlng, zoom: 11, layers: [OSM] });
+      //var map = L.map('map', { center: latlng, zoom: 5, layers: [OSM] });
+      var symbolURLprefix = "https://vinnakota1.esri.com/server/rest/services/Utilities/SymbolsUtility/SymbolServer/generateImage?webstyle=4ccb7545bf8e4e8c8c34c05b743e1940&symbolName=&dictionaryFeatures=%7B%22attributes%22%3A%7B%22sidc%22%3A%22";
+      var symbolURLsuffix = "%22%7D%7D&dpi=&size=200%2C200&format=png32&f=image";
+
+      var iconSize = {
+        "Team/Crew": 5,
+        "Squad": 10,
+        "Section": 15,
+        "Platoon/detachment": 20,
+        "Company/battery/troop": 25,
+        "Battalion/squadron": 30,
+        "Regiment/group": 35,
+        "Brigade": 40,
+        "Division": 45,
+        "Corps/MEF": 50,
+        "Army": 55,
+        "Army Group/front": 60,
+        "Region/Theater": 65,
+        "Command": 70
+      };
+
+      function getImageforFeature(feature, latlng) {
+        //var featureSIDC = feature.properties.SIDC;
+        var featureSIDC = feature.properties.sidc;
+        symbolURL = symbolURLprefix + featureSIDC + symbolURLsuffix;
+
+        var milIcon = L.icon({
+          iconUrl: symbolURL,
+          iconSize: [90,90],
+          iconAnchor: [5,5]
+        })
+        return L.marker(latlng, {icon: milIcon});
+      }
+
+      var geojsonLayer = L.geoJSON(situation, {
+        pointToLayer: getImageforFeature
+         
+      }).addTo(map);
+
+  </script>
+    
+ 
+
+
+
+</body>
+
+</html>
